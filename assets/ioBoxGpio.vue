@@ -75,23 +75,26 @@ export default{
                 this.myLine = undefined;
             }
         },
-    },
-    computed:{
-        gpioBclass(){
-            if( this.p.pType == 'R')
+        getColorForTyp(pType){
+            if( pType == 'R')
                 return '#a9f3f0';
-            else if( this.p.pType == 'O' ){
+            else if( pType == 'O' ){
                 return '#f9f339';
-            }else if( this.p.pType == 'I' )
+            }else if( pType == 'I' )
                 return '#f98339';
-            else if( this.p.pType == 'A' )
+            else if( pType == 'A' )
                 return '#60e30e';
-            else if( this.p.pType == 'D' )
+            else if( pType == 'D' )
                 return '#a3a047';
-            else if( this.p.pType == 'T' )
+            else if( pType == 'T' )
                 return '#f283fd';
             else
                 return '#fff;';
+        }
+    },
+    computed:{
+        gpioBclass(){
+            return this.getColorForTyp( this.p.pType );
         },
         pStateNice(){
             if( this.p.pType == 'R')

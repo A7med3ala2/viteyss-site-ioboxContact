@@ -22,7 +22,7 @@ class s_vysioboxContactPage{
   
   getHtml = () => {
 
-    return `<b>${this.getName}</b><br><!--
+    return `<!--<b>${this.getName}</b><br>
     <img src="${this.homeUrl}assets/ico_viteyss_32.png"><br>
     This is a npm package<br>
     viteyss-site-ioboxContact<br>
@@ -34,8 +34,7 @@ class s_vysioboxContactPage{
     More ditails in \`./site.json\`
     </pre>
     -->
-    <div id="ioboxRefference"
-      style="max-width:100vw;">refference</div>
+    
     <div id="ioboxApp"></div>
     <br><br><br>
     `;
@@ -44,15 +43,10 @@ class s_vysioboxContactPage{
 
   getHtmlAfterLoad = () =>{
     cl(`${this.getName} - getHtmlAfterLoad()`);
-    this.ioApp = createApp(IoBoxApp);
+    this.ioApp = createApp(IoBoxApp,{thomeUrl: this.homeUrl});
     this.ioApp.component('iobox-gpio',IoBoxGpio);
     this.ioApp.component('iobox-gpio-state',IoBoxState);
     this.ioApp.mount('#ioboxApp');
-
-    $.get( `${this.homeUrl}assets/esp32_30pin.svg`, function( data, status ){
-        siteByKey.s_multiSVGPage.o.mulSvgParseGet( data  , status, false, '#ioboxRefference' );
-        
-    } );
 
   }
 

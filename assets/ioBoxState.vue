@@ -19,6 +19,52 @@
             :style="'width:'+adcWidth()+'%;'"
             >adc</div>
     </div>
+
+    <div v-else-if="p.pType == 'dbm'"
+        class="ioBoxStateInLine" style="width:100px; border-radius: 3px; border: solid 1px gray;" >
+        <div>
+            <div 
+                style="position: absolute;">
+                {{ p.pState }} dbm
+            </div>
+            <div 
+                class="ioBadcState ioBWifiState" 
+                :style="'width:'+dbmWidth()+'%;'"
+                > </div>
+        </div>
+    </div>
+
+    <div v-else-if="p.pType == 'temp'"
+        class="ioBoxStateInLine" style="width:100px; border-radius: 3px; border: solid 1px gray;">
+        <div>
+            <div 
+                style="position: absolute;">
+                {{ p.pState }} 'C
+            </div>
+            <div 
+                class="ioBadcState ioBTempState" 
+                :style="'width:'+tempWidth()+'%;'"
+                > </div>
+        </div>
+    </div>
+
+    <div v-else-if="p.pType == 'timePass'"
+        class="ioBoxStateInLine" style="width:100px; border-radius: 3px; border: solid 1px gray;">
+        <div>
+            <div 
+                style="position: absolute;">
+                {{  ((Date.now() - p.pState)/1000).toFixed(2) }} sec.
+            
+            </div>
+            <div 
+                class="ioBadcState ioBTempState" 
+                :style="'width:'+timePassWidth()+'%;'"
+                >
+            </div>
+        </div>
+    </div>
+
+
     <div v-else-if="p.pType == 'T'">
         <div 
             class="ioBadcState ioBtouchState" 
@@ -48,11 +94,23 @@ export default{
             //console.log('ws push ',cmd);
             sOutSend(cmd );
         },
+        timePassWidth(){
+            return mMapVal(
+                ((Date.now() - this.p.pState)/1000),
+                0,5,0,100
+                );
+        },
+        tempWidth(){
+            return parseInt(mMapVal(this.p.pState,0,100,0,100));
+        },
         adcWidth(){
             return parseInt(mMapVal(this.p.pState,0,4095,0,100));
         },
         touchWidth(){
             return parseInt(mMapVal(this.p.pState,0,255,0,100));
+        },
+        dbmWidth(){
+            return parseInt(mMapVal(this.p.pState,-30.0,-90.0,100,0));
         },
         gpioSetState( newState ){
             let cmd = `toMqttPub:topic=and/boxio/cmd/${this.boxioNo}/p,`+
@@ -111,9 +169,21 @@ export default{
     border-radius: 3px;
     border-color: gray solid 1px;
     min-width: 2px;
+    min-height: 15px;
 }
 .ioBtouchState{
     background-color: orange;
 }
 
+.ioBWifiState{
+    background-color: rgb(110, 156, 255);
+}
+
+.ioBTempState{
+    background-color: rgb(239, 254, 106);
+}
+
+.ioBoxStateInLine{
+    display: inline-block;
+}
 </style>

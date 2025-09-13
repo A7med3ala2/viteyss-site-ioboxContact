@@ -1,29 +1,53 @@
 <template>
-    <small>
+    <b>io-box Contact No#{{ boxioNo }}</b><br>
+    <div 
+        :id="'iobox'+boxioNo+'Refference'"
+        style="max-width:100vw;">waiting for board model ...</div>
 
-        No#{{ boxioNo }} 
-        ip:{{ ip }} dbm:{{ dbm }}(dBm) tik:{{ tik }} chipTemp:{{ chipTemp }}('C)
-        Data from: {{ bSettingsTupdate }} <br>
+    <small v-if="tik == 0 && box.dbm == 0">
+        looking for io-box ...
     </small>
-    <iobox-gpio 
+    <small v-else>
+        ip:{{ box.ip }} 
+        tik:{{ tik }} <br>
+        <iobox-gpio-state :p="wifidbmPin" :boxioNo="boxioNo" /> 
+        <iobox-gpio-state :p="chipTempPin" :boxioNo="boxioNo" />
+        <iobox-gpio-state :p="timePassPin" :boxioNo="boxioNo" />
+    </small>
+
+    <div v-if="bSettingsArr.length == 0"><small>waiting for setting's ...</small></div>
+    <div v-else>
+        <iobox-gpio 
         v-for="p in bSettingsArr"
         :p="p"
         :boxioNo="boxioNo"
+        ref="ioboxgpioComp"
         />
+    </div>
 
 </template>
 <script>
 export default{
+    props:['thomeUrl'],
     data(){
         return {
             tik: 0,
-            ip: "---.---.---.---",
-            dbm: 0,
             boxioNo: 1,
-            chipTemp: 0,
+            box:{
+                ip: "---.---.---.---",
+                dbm: 0,
+                chipTemp: 0,
+                boardModel: "",
+                adcHz: 1,
+                touchRou: 10
+            },
             gpiosData: [],
             bSettingsArr: [],
-            bSettingsTupdate: 0
+            bSettingsTupdate: 0,
+            imageBoard: '',
+            wifidbmPin:{ pType: 'dbm', pState: -49 },
+            chipTempPin:{ pType: 'temp', pState: 0 },
+            timePassPin:{ pType: 'timePass', pState: 0  }
         }
     },
     mounted(){
@@ -36,25 +60,70 @@ export default{
 
     },
     methods:{
+        getColorForTyp(pType){
+            if( pType == 'R')
+                return '#a9f3f0';
+            else if( pType == 'O' ){
+                return '#f9f339';
+            }else if( pType == 'I' )
+                return '#f98339';
+            else if( pType == 'A' )
+                return '#60e30e';
+            else if( pType == 'D' )
+                return '#a3a047';
+            else if( pType == 'T' )
+                return '#f283fd';
+            else
+                return '#fff;';
+        },
+        doBoardLoadDataLoaded( data, status ){
+            let divTarget = `#iobox${this.boxioNo}Refference`;
+            siteByKey.s_multiSVGPage.o.mulSvgParseGet( data  , status, false, divTarget );
+            for(let pinA of this.bSettingsArr){
+                /*
+                    pType: p[1],
+                    pTypeNice: pTNice,
+                    pNo: p[0],
+                    pState: p[2]
+                    */
+                updateStyle("g"+pinA['pNo'], {
+                    'fill': this.getColorForTyp( pinA['pType'] )
+                } );
+                
+                updateStyle("g"+pinA['pNo'], {
+                    'stroke': this.getColorForTyp( pinA['pType'] )
+                } );
+                    
+                this.imageBoard = this.box.boardModel;
+            }
+        },
+        doBoardLoad(){
+            if( this.box.boardModel != this.imageBoard && this.imageBoard != 'loading...' ){
+                this.imageBoard = 'loading...';
+                let divTarget = `#iobox${this.boxioNo}Refference`;
+                $(divTarget).html( this.imageBoard );
+                $.get( `${this.thomeUrl}assets/${this.box.boardModel}.svg`, this.doBoardLoadDataLoaded );
+            }          
+        },
         newMessage( msg ){
             //this.gpiosData
             
-            if( String(msg['topic']).endsWith(`boxio/${this.boxioNo}/chipTemp`) )
-                this.chipTemp = parseFloat(msg['payload']);
-
-            else if( String(msg['topic']).endsWith(`boxio/${this.boxioNo}/cpu/percent`) )
-                this.tik = parseInt(msg['payload']);
-
-            else if( String(msg['topic']).endsWith(`boxio/${this.boxioNo}/ip`) )
-                this.ip = msg['payload'];
-
-            else if( String(msg['topic']).endsWith(`boxio/${this.boxioNo}/dbm`) )
-                this.dbm = parseInt(msg['payload']);
+            
+            if( String(msg['topic']).endsWith(`boxio/${this.boxioNo}/box`) ){
+                this.box = JSON.parse(msg['payload']);
+                this.wifidbmPin.pState = this.box.dbm;
+                this.chipTempPin.pState = this.box.chipTemp;
+                
+                this.timePassPin.pState = Date.now();
+                
+                
+            }else if( String(msg['topic']).endsWith(`boxio/${this.boxioNo}/cpu/percent`) )
+            this.tik = parseInt(msg['payload']);
 
             else if( String(msg['topic']).startsWith(`and/boxio/${this.boxioNo}/s/`) ){
                 let tmp = msg['topic'].split('/');
                 let pin = parseInt( tmp[ tmp.length-1 ] );
-                console.log("gpio hot update pin:"+pin);
+                //console.log("gpio hot update pin:"+pin);
                 //this.dbm = parseInt(msg['payload']);
                 //this.bSettings[ pin ]['pState'] = parseInt( msg['payload'] );
                 for( let p of this.bSettingsArr){
@@ -67,9 +136,7 @@ export default{
 
             }else if( String(msg['topic']).endsWith(`boxio/${this.boxioNo}/settings`) ){
                 let pay = msg['payload'].split(',');
-                let firstTime = false;
                 if( this.bSettingsArr.length == 0 ){
-                    firstTime = true;
                     this.bSettingsArr = new Array(pay.length-1);
                 }
                 for(let pi=0,pc=pay.length-1; pi<pc; pi++){
@@ -82,34 +149,14 @@ export default{
                         pTypeNice: pTNice,
                         pNo: p[0],
                         pState: p[2]
-                    }
-
-                    if( firstTime ){
-                        updateStyle("g"+p[0], {
-                            'fill': shaderColor( rgbToHex(
-                                50,
-                                50,
-                                50
-                            ) )
-                        } );
-                        
-                        updateStyle("g"+p[0], {
-                            'stroke': shaderColor( rgbToHex(
-                                250,
-                                50,
-                                50
-                            ) )
-                        } );
-                        
-                    }
-                    
+                    };
                     this.bSettingsArr[ pi ]= pin;
-                    console.log('gpio color');
                     
-
+                    
                 }
                 this.bSettingsTupdate = Date.now();
-
+                this.doBoardLoad();
+                
             }
 
         }
