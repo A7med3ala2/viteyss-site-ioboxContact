@@ -12,7 +12,8 @@
         tik:{{ tik }} <br>
         <iobox-gpio-state :p="wifidbmPin" :boxioNo="boxioNo" /> 
         <iobox-gpio-state :p="chipTempPin" :boxioNo="boxioNo" />
-        <iobox-gpio-state :p="timePassPin" :boxioNo="boxioNo" />
+        <iobox-gpio-state :p="timePassPin" :boxioNo="boxioNo" /> 
+        la({{box.laPin}}): <input type="checkbox" @change="ioboxLaChange()" v-model="logicAnalizer" />
     </small>
 
     <div v-if="bSettingsArr.length == 0"><small>waiting for setting's ...</small></div>
@@ -41,6 +42,7 @@ export default{
                 adcHz: 1,
                 touchRou: 10
             },
+            logicAnalizer: false,
             gpiosData: [],
             bSettingsArr: [],
             bSettingsTupdate: 0,
@@ -60,6 +62,13 @@ export default{
 
     },
     methods:{
+        ioboxLaChange(){
+            console.log('so la is '+this.logicAnalizer);
+            let cmd = `toMqttPub:topic=and/boxio/cmd/${this.boxioNo}/la,`+
+                `payload=`+(this.logicAnalizer ? 1:0);
+            console.log('ws push ',cmd);
+            sOutSend(cmd );
+        },
         getColorForTyp(pType){
             if( pType == 'R')
                 return '#a9f3f0';
@@ -112,6 +121,7 @@ export default{
             if( String(msg['topic']).endsWith(`boxio/${this.boxioNo}/box`) ){
                 this.box = JSON.parse(msg['payload']);
                 this.wifidbmPin.pState = this.box.dbm;
+                this.logicAnalizer = this.box.laPin != -1 ? true : false;
                 this.chipTempPin.pState = this.box.chipTemp;
                 
                 this.timePassPin.pState = Date.now();
